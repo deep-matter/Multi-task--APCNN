@@ -2,7 +2,7 @@
 
 
 <div align="center">
-    <img src="./assets/figure.png"/></br>
+    <img src="../assets/figure.png"/></br>
     <figcaption>CNN-MTL </figcaption>
 </div>
 

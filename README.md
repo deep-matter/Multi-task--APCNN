@@ -48,7 +48,7 @@ pip install -e
 
 
 ```python 
-from src.models.cnn import BaseCNN
+from models.cnn import BaseCNN
 import yaml 
 import os
 
@@ -66,6 +66,98 @@ if __name__ == "__main__":
     output = model(sample_input)
     print("Output shape:", output.shape)
 ```  
+
+### Multi-task Learning Framework 
+
+
+```python 
+from models.mtl import MTL
+from models.cnn import CNN
+import yaml 
+import os
+
+if __name__ == "__main__":
+
+    with open("config.yml", 'w') as file:
+        yaml.dump(dummy_config, file)
+
+    base_cnn = BaseCNN(config_path="config.yml")
+
+    num_attributes = 10
+    model = MTLFramework(base_cnn=base_cnn, num_attributes=num_attributes)
+    sample_input = torch.randn(8, 3, 64, 64)
+
+    output = model(sample_input)
+    print("Output shape:", output.shape) 
+
+```
+
+### Solving the Optimization Problem of Equation
+
+
+```python 
+from src.models.cnn import CNN
+from src.models.mtl import  MTL
+from src.models.optimizer import optimize_s, optimize_l
+from src.models.loss import hinge_loss
+
+def optimize_s_step(model, dummy_input, dummy_labels, optimizer_s, scaler):
+    model.train()
+    optimizer_s.zero_grad()
+    with amp.autocast():
+        predictions = model(dummy_input)
+        loss = hinge_loss(predictions, dummy_labels)
+    scaler.scale(loss).backward(retain_graph=True)
+    scaler.step(optimizer_s)
+    scaler.update()
+
+def optimize_l_step(model, dummy_input, dummy_labels, optimizer_l, scaler):
+    model.train()
+    optimizer_l.zero_grad()
+    with amp.autocast():
+        predictions = model(dummy_input)
+        loss = hinge_loss(predictions, dummy_labels)
+    scaler.scale(loss).backward()
+    scaler.step(optimizer_l)
+    scaler.update()
+
+def optimize_model(model, inputs, attributes, optimizer_s, optimizer_l, scaler, num_iterations):
+    for iteration in range(num_iterations):
+        optimize_s_step(model, inputs, attributes, optimizer_s, scaler)
+        optimize_l_step(model, inputs, attributes, optimizer_l, scaler)
+
+if __name__ == "__main__":
+    with open('config.yml', 'r') as file:
+        config = yaml.safe_load(file)
+
+    base_cnn = CNN(config_path='config.yml')
+    num_attributes = 5 # number of attributes
+    model = MTLFramework(base_cnn, num_attributes)
+
+    # Define input and num_attributes 
+    inputs_image  = torch.randn(1, 3, 224, 224)
+    attributes = torch.tensor([[1, -1, 1, -1, 1]], dtype=torch.float16)
+
+    # Define optimizers
+    params_s = model.task_specific_layers.parameters()
+    params_l = model.latent_task_matrix.parameters()
+    optimizer_s = optim.Adam(params_s, lr=config['model']['learning_rate_s'])
+    optimizer_l = optim.Adam(params_l, lr=config['model']['learning_rate_l'])
+
+    # Define scaler for mixed precision
+    scaler = amp.GradScaler()
+
+    # Optimize the model
+    optimize_model(model, inputs_image, attributes, optimizer_s, optimizer_l, scaler, num_iterations=10)
+
+    # Print parameters
+    print("Final Combination Matrix S:", model.task_specific_layers)
+    print("Final Latent Task Matrix L:", model.latent_task_matrix.weight)
+
+    with torch.no_grad():
+        dummy_output = model(dummy_input)
+    print(" Output Shape:", dummy_output.shape) # output [1 , -1]
+```
 
 ### Citation   
 ```
