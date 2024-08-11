@@ -1,0 +1,38 @@
+# config.yml
+
+model:
+  # BaseCNN configuration (same as before)
+  input_channels: 3
+  conv1_out_channels: 64
+  conv1_kernel_size: 11
+  conv1_stride: 4
+  conv1_padding: 2
+  conv2_out_channels: 192
+  conv2_kernel_size: 5
+  conv2_padding: 2
+  conv3_out_channels: 384
+  conv3_kernel_size: 3
+  conv3_padding: 1
+  conv4_out_channels: 256
+  conv4_kernel_size: 3
+  conv4_padding: 1
+  conv5_out_channels: 256
+  conv5_kernel_size: 3
+  conv5_padding: 1
+  linear_input_dim: 256 * 6 * 6
+  linear1_out_dim: 4096
+  linear2_out_dim: 4096
+  
+  # MTLFramework configuration
+  latent_dim: 1024  # Dimensionality of the shared latent task matrix
+  num_attributes: 5  # Number of binary attributes to predict
+ 
+  # HingeLoss and Optimizer configuration
+  learning_rate_s: 0.001  # Learning rate for the S matrix optimizer
+  learning_rate_l: 0.001  # Learning rate for the L matrix optimizer
+  num_epochs: 10          # Number of training epochs
+  early_stop_patience: 5  # Patience for early stopping
+  checkpoint_path: './checkpoints'  # Path to save checkpoints
+
+
+

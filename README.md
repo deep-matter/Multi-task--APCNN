@@ -79,12 +79,12 @@ import os
 if __name__ == "__main__":
 
     with open("config.yml", 'w') as file:
-        yaml.dump(dummy_config, file)
+        yaml.dump(config, file)
 
-    base_cnn = BaseCNN(config_path="config.yml")
+    base_cnn = CNN(config_path="config.yml")
 
     num_attributes = 10
-    model = MTLFramework(base_cnn=base_cnn, num_attributes=num_attributes)
+    model = MTL(base_cnn=base_cnn, num_attributes=num_attributes)
     sample_input = torch.randn(8, 3, 64, 64)
 
     output = model(sample_input)
@@ -101,22 +101,22 @@ from src.models.mtl import  MTL
 from src.models.optimizer import optimize_s, optimize_l
 from src.models.loss import hinge_loss
 
-def optimize_s_step(model, dummy_input, dummy_labels, optimizer_s, scaler):
+def optimize_s_step(model, inputs, labels, optimizer_s, scaler):
     model.train()
     optimizer_s.zero_grad()
     with amp.autocast():
-        predictions = model(dummy_input)
-        loss = hinge_loss(predictions, dummy_labels)
+        predictions = model(inputs)
+        loss = hinge_loss(predictions, attributes)
     scaler.scale(loss).backward(retain_graph=True)
     scaler.step(optimizer_s)
     scaler.update()
 
-def optimize_l_step(model, dummy_input, dummy_labels, optimizer_l, scaler):
+def optimize_l_step(model, inputs, dummy_labels, optimizer_l, scaler):
     model.train()
     optimizer_l.zero_grad()
     with amp.autocast():
-        predictions = model(dummy_input)
-        loss = hinge_loss(predictions, dummy_labels)
+        predictions = model(inputs)
+        loss = hinge_loss(predictions, attributes)
     scaler.scale(loss).backward()
     scaler.step(optimizer_l)
     scaler.update()
@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     base_cnn = CNN(config_path='config.yml')
     num_attributes = 5 # number of attributes
-    model = MTLFramework(base_cnn, num_attributes)
+    model = MTL(base_cnn, num_attributes)
 
     # Define input and num_attributes 
     inputs_image  = torch.randn(1, 3, 224, 224)
@@ -169,7 +169,9 @@ Attributes Dataset
 - [ ] training the MTL Framework on Fine-tune CNN of each attribute 
 
 
-### Ideas Could Improve the 
+### Ideas Could Improve the exitence work 
+
+
 
 ### Citation   
 ```
@@ -185,9 +187,8 @@ Attributes Dataset
 }
 ```   
 
-# get in touch
+#### Buitl by 
 
-Libraries utilisées :
 <p align="center">
   <a href="https://github.com/deep-matter" class="fancybox" ><img src="https://user-images.githubusercontent.com/63207451/97302854-e484da80-1859-11eb-9374-5b319ca51197.png" title="GitHub" width="40" height="40"></a>
   <a href="https://www.linkedin.com/in/youness-el-brag-b13628203/" class="fancybox" ><img src="https://user-images.githubusercontent.com/63207451/97303444-b2c04380-185a-11eb-8cfc-864c33a64e4b.png" title="LinkedIn" width="40" height="40"></a>
