@@ -31,8 +31,6 @@ def train_model(model, data_loader, optimizer_s, optimizer_l, num_epochs, early_
     best_loss = float('inf')
     epochs_no_improve = 0
 
-
-
     for epoch in range(num_epochs):
         model.train()
         epoch_loss = 0
@@ -57,7 +55,6 @@ def train_model(model, data_loader, optimizer_s, optimizer_l, num_epochs, early_
         accuracy = accuracy_score(all_targets, all_predictions)
         recall = recall_score(all_targets, all_predictions, average='macro')
 
-        # Logging
         print(f'Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss}, Accuracy: {accuracy:.4f}, Recall: {recall:.4f}')
 
         # Early Stopping and Model Checkpointing

@@ -1,16 +1,13 @@
-import yaml
+mport torch
 import torch.nn as nn
 
 class CNN(nn.Module):
     """
-    CNN is a Convolutional Neural Network (CNN model. 
+    CNN is a Convolutional Neural Network (CNN) model. 
     This model is designed for feature extraction.
 
     Attributes:
     ----------
-    config : dict
-        A dictionary containing all configuration parameters loaded 
-        from a YAML file.
     features : nn.Sequential
         A sequential container for the convolutional and pooling 
         layers of the network.
@@ -18,59 +15,83 @@ class CNN(nn.Module):
         A sequential container for the fully connected layers used 
         for classification.
     """
-    def __init__(self, config_path="config.yml"):
+    def __init__(self, input_channels=3, conv1_out_channels=64, conv1_kernel_size=11, 
+                 conv1_stride=4, conv2_out_channels=192, conv2_kernel_size=5, 
+                 conv3_out_channels=384, conv3_kernel_size=3, conv4_out_channels=256, 
+                 conv4_kernel_size=3, conv5_out_channels=256, conv5_kernel_size=3, 
+                 linear_input_dim=256*6*6, linear1_out_dim=4096, linear2_out_dim=4096):
         """
-        Initializes the BaseCNN model with the given configuration.
+        Initializes the CNN model with the given parameters.
 
         Parameters:
         ----------
-        config_path : str, optional
-            The path to the YAML configuration file. Default is "config.yml".
+        input_channels : int
+            Number of input channels (e.g., 3 for RGB images).
+        conv1_out_channels : int
+            Number of output channels for the first convolutional layer.
+        conv1_kernel_size : int
+            Kernel size for the first convolutional layer.
+        conv1_stride : int
+            Stride for the first convolutional layer.
+        conv2_out_channels : int
+            Number of output channels for the second convolutional layer.
+        conv2_kernel_size : int
+            Kernel size for the second convolutional layer.
+        conv3_out_channels : int
+            Number of output channels for the third convolutional layer.
+        conv3_kernel_size : int
+            Kernel size for the third convolutional layer.
+        conv4_out_channels : int
+            Number of output channels for the fourth convolutional layer.
+        conv4_kernel_size : int
+            Kernel size for the fourth convolutional layer.
+        conv5_out_channels : int
+            Number of output channels for the fifth convolutional layer.
+        conv5_kernel_size : int
+            Kernel size for the fifth convolutional layer.
+        linear_input_dim : int
+            Input dimension for the first fully connected layer.
+        linear1_out_dim : int
+            Output dimension for the first fully connected layer.
+        linear2_out_dim : int
+            Output dimension for the second fully connected layer.
         """
         super(CNN, self).__init__()
 
-        # Load configurations from YAML file
-        with open(config_path, 'r') as file:
-            config = yaml.safe_load(file)['model']
-
         self.features = nn.Sequential(
-            nn.Conv2d(config['input_channels'], config['conv1_out_channels'],
-                      kernel_size=config['conv1_kernel_size'], 
-                      stride=config['conv1_stride'], 
-                      padding=config['conv1_padding']),
+            nn.Conv2d(input_channels, conv1_out_channels, 
+                      kernel_size=conv1_kernel_size, 
+                      stride=conv1_stride),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            nn.Conv2d(config['conv1_out_channels'], config['conv2_out_channels'], 
-                      kernel_size=config['conv2_kernel_size'], 
-                      padding=config['conv2_padding']),
+            nn.Conv2d(conv1_out_channels, conv2_out_channels, 
+                      kernel_size=conv2_kernel_size),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
-            nn.Conv2d(config['conv2_out_channels'], config['conv3_out_channels'], 
-                      kernel_size=config['conv3_kernel_size'], 
-                      padding=config['conv3_padding']),
+            nn.Conv2d(conv2_out_channels, conv3_out_channels, 
+                      kernel_size=conv3_kernel_size),
             nn.ReLU(inplace=True),
-            nn.Conv2d(config['conv3_out_channels'], config['conv4_out_channels'], 
-                      kernel_size=config['conv4_kernel_size'], 
-                      padding=config['conv4_padding']),
+            nn.Conv2d(conv3_out_channels, conv4_out_channels, 
+                      kernel_size=conv4_kernel_size),
             nn.ReLU(inplace=True),
-            nn.Conv2d(config['conv4_out_channels'], config['conv5_out_channels'], 
-                      kernel_size=config['conv5_kernel_size'], 
-                      padding=config['conv5_padding']),
+            nn.Conv2d(conv4_out_channels, conv5_out_channels, 
+                      kernel_size=conv5_kernel_size),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2)
         )
+        
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(config['linear_input_dim'], config['linear1_out_dim']),
+            nn.Linear(linear_input_dim, linear1_out_dim),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(config['linear1_out_dim'], config['linear2_out_dim']),
+            nn.Linear(linear1_out_dim, linear2_out_dim),
             nn.ReLU(inplace=True)
         )
 
     def forward(self, x):
         """
-        Defines the forward pass of the BaseCNN model.
+        Defines the forward pass of the CNN model.
 
         Parameters:
         ----------
@@ -81,7 +102,7 @@ class CNN(nn.Module):
         -------
         torch.Tensor
             Output tensor after passing through the feature extraction 
-            and classification layers.
+            and Flatten layers.
         """
         x = self.features(x)
         x = x.view(x.size(0), -1)  # Flatten the tensor

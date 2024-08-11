@@ -52,24 +52,20 @@ from models.cnn import CNN
 import yaml 
 import os
 
-if __name__ == "__main__":
-    
-   
+model = CNN(
+  input_channels=3, conv1_out_channels=64, 
+  conv1_kernel_size=11, conv1_stride=4,
+  conv2_out_channels=192,conv2_kernel_size=5, 
+  conv3_out_channels=384,conv3_kernel_size=3, 
+  conv4_out_channels=256,conv4_kernel_size=3, 
+  conv5_out_channels=256, conv5_kernel_size=3,
+  linear_input_dim=256*6*6,linear1_out_dim=4096, 
+  linear2_out_dim=4096)
 
-    model = CNN(
-      input_channels=3, conv1_out_channels=64, 
-      conv1_kernel_size=11, conv1_stride=4,
-      conv2_out_channels=192,conv2_kernel_size=5, 
-      conv3_out_channels=384,conv3_kernel_size=3, 
-      conv4_out_channels=256,conv4_kernel_size=3, 
-      conv5_out_channels=256, conv5_kernel_size=3,
-      linear_input_dim=256*6*6,linear1_out_dim=4096, 
-      linear2_out_dim=4096)
-
-    # input tensor (batch size of 8, 3 channels, 64x64 images)
-    sample_input = torch.randn(8, 3, 64, 64)
-    output = model(sample_input)
-    print("Output shape:", output.shape)
+# input tensor (batch size of 8, 3 channels, 64x64 images)
+sample_input = torch.randn(8, 3, 64, 64)
+output = model(sample_input)
+print("Output shape:", output.shape)
 ```  
 
 ### Multi-task Learning Framework 
@@ -80,7 +76,6 @@ from models.mtl import MTL
 from models.cnn import CNN
 
 if __name__ == "__main__":
-    # Define the parameters for the CNN model
     cnn_params = {
         'input_channels': 3,
         'conv1_out_channels': 64,
@@ -105,7 +100,7 @@ if __name__ == "__main__":
         CNN(**cnn_params)   # more groups as needed
     ]
     
-    # number of binary attributes
+    # number attributes
     num_attributes = 10
     
     # MTL model with the base CNNs and the number of attributes
@@ -209,7 +204,7 @@ In our multi-task learning framework, where we aim to predict multiple binary se
 
 ### Ideas Could Improve the exitence work 
 
-1. Joint Embedding Optimization which could Align both text of attribute and Images to learn the Localization 
+- Joint Embedding Optimization which could Align both text of attribute and Images to learn the Localization 
 
 ```bibtex
 @article{he2023localized,
@@ -220,7 +215,7 @@ In our multi-task learning framework, where we aim to predict multiple binary se
 }
 
 ```
-2. ViT Vision transfomer using Cross Attention-Modal to set atmtribute as Query and KV (images) 
+- ViT Vision transfomer using Cross Attention-Modal to set atmtribute as Query and KV (images) 
 
 ```bibtex
 @inproceedings{chen2021crossvit,
@@ -233,7 +228,7 @@ In our multi-task learning framework, where we aim to predict multiple binary se
 
 ```
 
-3. Large-Vision Langauge Model used Mixed-Fused Tokens Embedding or Graph-LLM Constuctive learning such CLIP model to leand Caption 
+- Large-Vision Langauge Model used Mixed-Fused Tokens Embedding or Graph-LLM Constuctive learning such CLIP model to leand Caption 
 
 ```bibtex
 @article{chen2024fewer,
@@ -244,15 +239,6 @@ In our multi-task learning framework, where we aim to predict multiple binary se
 }
 
 ```
-```bibtex
-@article{team2024chameleon,
-  title={Chameleon: Mixed-modal early-fusion foundation models},
-  author={Team, Chameleon},
-  journal={arXiv preprint arXiv:2405.09818},
-  year={2024}
-}
-```
-
 ```bibtex
 @article{team2024chameleon,
   title={Chameleon: Mixed-modal early-fusion foundation models},
@@ -274,6 +260,7 @@ In our multi-task learning framework, where we aim to predict multiple binary se
 
 
 ### Citation   
+
 ```bibtex
 @article{abdulnabi2015multi,
   title={Multi-task CNN model for attribute prediction},
@@ -286,9 +273,6 @@ In our multi-task learning framework, where we aim to predict multiple binary se
   publisher={IEEE}
 }
 ```  
-
-### references Reading paper 
-
 
 ```bibtex
 @inproceedings{xia2017attributes,
