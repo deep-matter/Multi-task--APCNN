@@ -159,6 +159,18 @@ if __name__ == "__main__":
     print(" Output Shape:", dummy_output.shape) # output [1 , -1]
 ```
 
+
+### Tasks under Progress 
+
+- [ ] built DataLoader of Animals with Attributes (AwA) and the Clothing
+Attributes Dataset
+- [ ] Evalaution Metric G-groups of Differents num attributes
+- [ ] Multi-parallesim Training on GPUs using Torch.distub
+- [ ] training the MTL Framework on Fine-tune CNN of each attribute 
+
+
+### Ideas Could Improve the 
+
 ### Citation   
 ```
 @article{abdulnabi2015multi,
