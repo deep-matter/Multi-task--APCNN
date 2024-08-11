@@ -24,18 +24,17 @@ def main():
 
     model = MTL(base_cnn, config['model'])
 
-    # Define  parameters for S and L
+    # 1  parameters for S and L
     params_s = model.combination_matrix.parameters()
     params_l = model.latent_layer.parameters()
 
-    # Define - optimizers for S and L
+    # 2 - optimizers for S and L
     optimizer_s = optim.Adam(params_s, lr=config['model']['learning_rate_s'])
     optimizer_l = optim.Adam(params_l, lr=config['model']['learning_rate_l'])
 
     data_loader_module = __import__(args.data_loader, fromlist=['data_loader'])
     data_loader = data_loader_module.data_loader
 
-    # Ensure the checkpoint directory exists
     os.makedirs(config['model']['checkpoint_path'], exist_ok=True)
 
     train_model(model, data_loader, optimizer_s, optimizer_l, config['model']['num_epochs'], config['model']['early_stop_patience'], config['model']['checkpoint_path'])

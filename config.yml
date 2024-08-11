@@ -23,7 +23,7 @@ model:
   linear1_out_dim: 4096
   linear2_out_dim: 4096
   
-  # MTLFramework configuration
+  # MTL configuration
   latent_dim: 1024  # Dimensionality of the shared latent task matrix
   num_attributes: 5  # Number of binary attributes to predict
  
