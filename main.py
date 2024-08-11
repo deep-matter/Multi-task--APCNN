@@ -20,9 +20,9 @@ def main():
     with open(args.config, 'r') as file:
         config = yaml.safe_load(file)
 
-    base_cnn = BaseCNN(config_path=args.config)
+    base_cnn = CNN(config_path=args.config)
 
-    model = MTLFramework(base_cnn, config['model'])
+    model = MTL(base_cnn, config['model'])
 
     # Define  parameters for S and L
     params_s = model.combination_matrix.parameters()
